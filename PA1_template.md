@@ -4,18 +4,19 @@ output:
   html_document:
     keep_md: true
     fig_caption: true
+    fig_path: "figure"
 ---
 
 ### Data Loading and Preprocessing
 In this section, we load the dataset containing activity data. We use the read.csv function to read the CSV file into R and convert the 'steps' column to numeric format using the mutate function from the dplyr package.
 
-```{r}
+
+```r
 # Load the dataset
 suppressMessages(library(dplyr))
 
 activity <- read.csv("Assignment/activity.csv") %>%
         mutate(across(c(steps), as.numeric)) 
-
 ```
 
 
@@ -23,20 +24,35 @@ activity <- read.csv("Assignment/activity.csv") %>%
 ### What is mean total number of steps taken per day?  
 
 This section calculates and visualizes the total number of steps taken per day. We aggregate the data by date and calculate the sum of steps for each day. Then, we create a histogram to visualize the distribution of total steps per day. Finally, we calculate and display the mean and median number of steps per day.
-```{r, echo = TRUE}
+
+```r
 # Summarize the total number of steps taken per day
 steps_per_day <- aggregate(steps ~ date, data = activity, FUN = sum)
 
 # Create a histogram of the total number of steps taken each day
 hist(steps_per_day$steps, main = "Histogram of Total Steps per Day", xlab = "Total Steps", ylab = "Frequency", col = "purple")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png)<!-- -->
+
+```r
 # Calculate and report the mean and median of the total number of steps taken per day
 mean_steps <- mean(steps_per_day$steps)
 median_steps <- median(steps_per_day$steps)
 
 cat("Mean steps per day:", mean_steps, "\n")
-cat("Median steps per day:", median_steps, "\n")
+```
 
+```
+## Mean steps per day: 10766.19
+```
+
+```r
+cat("Median steps per day:", median_steps, "\n")
+```
+
+```
+## Median steps per day: 10765
 ```
 
 
@@ -45,21 +61,36 @@ cat("Median steps per day:", median_steps, "\n")
 
 This section analyzes the average daily activity pattern by grouping the data by 5-minute intervals and calculating the average number of steps for each interval. We visualize the results using a time series plot and identify the interval with the maximum average number of steps.
 
-```{r}
+
+```r
 # Group the data by 5-minute interval and calculate the average number of steps
 avg_steps <- aggregate(steps ~ interval, data = activity, FUN = mean)
 
 # Create a time series plot
 plot(avg_steps$interval, avg_steps$steps, type = "l", 
      main = "Average Daily Activity Pattern", xlab = "5-Minute Interval", ylab = "Average Number of Steps")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
+```r
 # Identify the interval with the maximum average number of steps
 max_interval <- avg_steps$interval[which.max(avg_steps$steps)]
 max_avg_steps <- max(avg_steps$steps)
 
 cat("Interval with the maximum average number of steps:", max_interval, "\n")
-cat("Maximum average number of steps in the interval:", max_avg_steps, "\n")
+```
 
+```
+## Interval with the maximum average number of steps: 835
+```
+
+```r
+cat("Maximum average number of steps in the interval:", max_avg_steps, "\n")
+```
+
+```
+## Maximum average number of steps in the interval: 206.1698
 ```
 
 
@@ -67,14 +98,20 @@ cat("Maximum average number of steps in the interval:", max_avg_steps, "\n")
 
 This section addresses missing values in the dataset. We first count the total number of missing values. Then, we impute missing values using the mean value of steps for each day. After imputation, we re-summarize the total steps per day, create a histogram to visualize the distribution with imputed values, and calculate the mean and median steps per day.
 
-```{r}
+
+```r
 # Calculate the total number of missing values
 total_missing_values <- sum(is.na(activity))
 
 # Report the total number of missing values
 cat("Total number of missing values in the dataset:", total_missing_values, "\n")
+```
 
+```
+## Total number of missing values in the dataset: 2304
+```
 
+```r
 # Calculate the mean for each day
 mean_value <- round(mean(activity$steps, na.rm = TRUE))
 new_activity <- activity
@@ -92,15 +129,28 @@ new_steps_per_day <- aggregate(steps ~ date, data = new_activity, FUN = sum)
 
 # Create a histogram of the total number of steps taken each day
 hist(new_steps_per_day$steps, main = "Histogram of Total Steps per Day", xlab = "Total Steps", ylab = "Frequency", col = "blue")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
+
+```r
 # Calculate and report the mean and median of the total number of steps taken per day
 mean_steps <- mean(new_steps_per_day$steps)
 median_steps <- median(new_steps_per_day$steps)
 
 cat("Mean steps per day:", mean_steps, "\n")
+```
+
+```
+## Mean steps per day: 10751.74
+```
+
+```r
 cat("Median steps per day:", median_steps, "\n")
+```
 
-
+```
+## Median steps per day: 10656
 ```
 
 
@@ -110,7 +160,8 @@ cat("Median steps per day:", median_steps, "\n")
 
 This section examines differences in activity patterns between weekdays and weekends. We categorize each day as either a weekday or a weekend based on the day of the week. Then, we summarize the data by interval and day type, calculating the average number of steps. Finally, we create a panel plot to visualize the average steps per 5-minute interval for weekdays and weekends separate
 
-```{r}
+
+```r
 # Load necessary packages
 library(dplyr)
 suppressMessages(library(ggplot2))
@@ -140,6 +191,7 @@ ggplot(summary_data, aes(x = interval, y = avg_steps, group = day_type, color = 
        x = "Interval",
        y = "Average Steps") +
   theme_bw()
-
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
